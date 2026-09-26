@@ -3,7 +3,7 @@
 **Anonymous code release for conference submission. Author identities withheld.**
 
 This is a **reviewer-facing, limited** package. It is intentionally incomplete to
-protect unpublished implementation details (防洗稿). The full source will be
+protect unpublished implementation details. The full source will be
 released upon acceptance.
 
 ## What is included
