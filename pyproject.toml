@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dynasolver"
+version = "0.1.0-submission"
+description = "DynaSolver anonymous conference submission (limited / stubbed model code)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "Anonymous Authors" }]
+dependencies = [
+  "numpy",
+  "h5py",
+  "torch",
+  "timm",
+  "einops",
+  "PyYAML",
+  "matplotlib",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dynasolver*"]

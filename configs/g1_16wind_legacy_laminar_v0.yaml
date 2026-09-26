@@ -1,0 +1,130 @@
+schema_version: 1
+experiment_id: g1_16wind_legacy_laminar_v0
+status: implementation
+provenance:
+  geopt_checkpoint_sha256: c0b1b9c4e5d533dbc249190d3d1fbe8e6b066b36d325cf4377cc0d613c02d1c2
+  geopt_checkpoint: ${GEOPT_CHECKPOINT}
+mesh_bank:
+  id: g1_walk_5ms_legacy_mesh_bank_v1
+  first_endpoint_s: 0.005
+  last_endpoint_s: 1.0
+  pose_spacing_s: 0.005
+  endpoint_count: 200
+  transition_count: 199
+  manifest: artifacts/mesh_bank/manifest.json
+physics:
+  solver: laminar_transient
+  reference_frame: root_fixed_treadmill
+  prescribed_motion: true
+  two_way_fsi: false
+  ground: false
+  density_kg_per_m3: 1.225
+  kinematic_viscosity_m2_per_s: 1.5e-05
+  pressure_kind: kinematic
+  pressure_farfield_m2_per_s2: 0.0
+  reference_length_m: 1.337937977684533
+  internal_dt_s: 0.0001
+  maximum_courant: 0.8
+  stationary_minimum_convective_times: 3.0
+  stationary_drag_drift_max: 0.01
+  farfield_velocity_bc: fixedValue_all_outer_vector
+  farfield_pressure_bc: outlet_reference_zeroGradient_elsewhere
+gcl:
+  normal_correction_displacement_limit_m: 1.0e-05
+openfoam:
+  mpi_ranks: 16
+model_contract:
+  model: DynamicTransolverV0
+  state_channels:
+  - Ux
+  - Uy
+  - Uz
+  - p_kinematic
+  state_dim: 4
+  static_feature_dim: 11
+  boundary_feature_dim: 8
+  speed_normalization_m_per_s: 8.0
+  update_rule: previous_state_plus_predicted_delta
+point_bank:
+  id: g1_walk_world_fixed_250k_v1
+  coordinate_frame: world_root_fixed
+  full_point_count: 250000
+  nested_subsets:
+  - 30000
+  - 70000
+  - 120000
+  - 250000
+  seed: 20260803
+  regions:
+  - motion_swept_volume
+  - near_wall
+  - wake
+  - far_field
+trajectory_contract:
+  run_root: runs/production_trajectories
+  runtime_root: runtime/production_trajectory_drivers
+  interval_runtime_root: runtime/production_interval_drivers
+  frame_count: 200
+  transition_count: 199
+  state_dim: 4
+  split_counts:
+    train: 10
+    validation: 2
+    test: 4
+  fidelity_class: legacy_mesh_reuse_dynamic_baseline
+  required_interval_gates:
+  - topology
+  - remap
+  - geometric_conservation_law
+  - continuity
+  - courant
+  - force
+  - moment
+  - finite_values
+  - provenance_hash_chain
+winds:
+  train:
+  - - 2.0
+    - -20.0
+  - - 2.0
+    - 0.0
+  - - 2.0
+    - 20.0
+  - - 4.0
+    - -20.0
+  - - 4.0
+    - 20.0
+  - - 6.0
+    - -20.0
+  - - 6.0
+    - 20.0
+  - - 8.0
+    - -20.0
+  - - 8.0
+    - 0.0
+  - - 8.0
+    - 20.0
+  validation:
+  - - 4.0
+    - 0.0
+  - - 6.0
+    - 0.0
+  test:
+  - - 3.0
+    - -10.0
+  - - 3.0
+    - 10.0
+  - - 7.0
+    - -10.0
+  - - 7.0
+    - 10.0
+pilot:
+  aligned:
+  - 4.0
+  - 0.0
+  oblique:
+  - 4.0
+  - 20.0
+  diagnostic_initializer_duration_s: 0.005
+  first_source_time_s: 0.005
+  first_target_time_s: 0.01

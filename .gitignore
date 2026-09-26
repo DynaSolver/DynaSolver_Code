@@ -1,0 +1,26 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+
+# Local data / runs (never ship)
+data/
+runs/
+*.h5
+*.hdf5
+*.pt
+*.pth
+*.npz
+*.ckpt
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp

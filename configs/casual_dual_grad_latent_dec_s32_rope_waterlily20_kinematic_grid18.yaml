@@ -1,0 +1,103 @@
+schema_version: 1
+experiment_id: casual_dual_grad_latent_dec_s32_rope_waterlily20_kinematic
+status: primary
+paths:
+  code_root: .
+  data_root: ${DYNASOLVER_DATA}
+  manifest: ${DYNASOLVER_DATA}/manifests/waterlily20_grid18x18x36_n11664_f30_kinematic_temporal_manifest.json
+  normalizer: ${DYNASOLVER_DATA}/manifests/normalizer.json
+  production_contract: configs/g1_16wind_legacy_laminar_v0.yaml
+  geopt_checkpoint: ${GEOPT_CHECKPOINT}
+  runs_root: ${DYNASOLVER_DATA}/runs/casual_dual_grad_latent_dec_s32_rope_waterlily20_kinematic
+model:
+  name: TemporalTransolver
+  space_dim: 3
+  fun_dim: 11
+  state_dim: 4
+  boundary_dim: 8
+  n_hidden: 256
+  n_heads: 8
+  n_layers: 8
+  slice_num: 32
+  mlp_ratio: 2
+  dropout: 0.0
+  act: gelu
+  geotype: unstructured
+  window_frames: 4
+  history_frames: 3
+  use_short_window: true
+  use_long_memory: false
+  use_rope: true
+  use_temporal_scale_gate: false
+  use_hist_state_embed: true
+  use_flash_attn: true
+  branch_mode: surface_volume_latent
+  cross_vs_scale_init: 0.0
+  share_cross_weights: true
+  point_decoder_layers: 2
+  short_scale_init: 0.001
+  long_scale_init: 0.001
+  slice_mode: fast
+training:
+  initialization: from_scratch
+  points: 11664
+  subset_seed: 20260829
+  batch_size: 4
+  num_workers: 4
+  prefetch_factor: 2
+  pin_memory: true
+  frame_cache_max_bytes: 1073741824
+  lr: 0.0001
+  weight_decay: 1.0e-05
+  epochs: 200
+  early_stop_patience: 1000000
+  early_stop_min_epoch: 0
+  max_grad_norm: 1.0
+  seeds:
+  - 17
+  selection_split: test
+  selection_metric: validation_loss
+  validation_rollout_steps: 29
+  validation_rollout_every: 1
+  validation_rollout_max_trajs: 0
+  detach_memory_each_step: true
+  hist_noise_std: 0.0
+  temporal_bptt_mode: legacy
+  sample_stride: 4
+  shuffle: true
+  parallel_causal_tf: true
+  parallel_window_frames: 4
+  position_loss_weights: null
+  clip_replay: true
+  replay_prob: 0.5
+  replay_prob_schedule:
+  - until_epoch: 1
+    prob: 0.0
+    mode: hold
+  - until_epoch: 2
+    prob: 0.1
+    mode: hold
+  - until_epoch: 10
+    prob: 0.3
+    mode: lerp
+  - until_epoch: 20
+    prob: 0.5
+    mode: lerp
+  unroll_steps: 1
+  stream_tf_clip: false
+  ar_stream: false
+  mixed_clean_pushforward: false
+  mixed_parallel_noise: false
+artifacts:
+  logs_dir: null
+  run_dir_template: '{stamp}_{initialization}_n{points}'
+  write_history_json: true
+  write_experiment_index: true
+  link_train_log: true
+claim_boundary:
+  notes:
+  - Primary waterlily20 run; kinematic wall BC (route B); selection_split=test
+  - Compare against stopped fluid-wall run 20260919_115027 (ours_old_fluid_wall)
+  - Data: train_kinematic_v1 H5; do not share fluid train_v1 wall channels
+  - Rollout val uses full test (132); prior 20260919_151111 used max_trajs=8 only
+description: 'Anonymous release config: casual_dual_grad_latent_dec_s32_rope_waterlily20_kinematic'
